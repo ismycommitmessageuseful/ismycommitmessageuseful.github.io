@@ -12,21 +12,27 @@ $(document).ready(function () {
 });
 
 $("#checkMessageButton").on("click", async function () {
-    console.log($("#messageInput").val());
+
+    var message = $("#messageInput").val().trim();
+    if (!message)
+        return;
+
     $(this).prop("disabled", true);
-    $(this).html("<span class=\"spinner-border spinner-border-sm\" aria-hidden=\"true\"></span>Loading...");
+    $(this).html("<span class=\"spinner-border spinner-border-sm mr-1\" aria-hidden=\"true\"></span>Loading...");
 
     // TODO: GET cannot have a body, change API method to accept message parameters from URL
-    fetch("https://ismycommitmessageuseful.herokuapp.com/api/predict", {
-        method: "GET",
-        cache: "no-cache",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: {
-            message: $("#messageInput").text()
-        }
-    })
+    // fetch(baseApiUrl + "predict", {
+    //     method: "GET",
+    //     cache: "no-cache",
+    //     headers: {
+    //         "Content-Type": "application/json"
+    //     },
+    //     body: {
+    //         message: $("#messageInput").text()
+    //     }
+    // })
+
+    await sleep(2000);
 
     $(this).prop("disabled", false);
     $(this).html("Check");
@@ -68,7 +74,7 @@ function loadRateCommits() {
     $("#rateCommitNotUsefulButton").prop("disabled", true);
     $("#rateCommitDontKnowButton").prop("disabled", true);
 
-    fetch("https://ismycommitmessageuseful.herokuapp.com/api/commits", {
+    fetch(baseApiUrl + "commits", {
         method: "GET",
         cache: "no-cache",
         mode: "cors"

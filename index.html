@@ -15,45 +15,54 @@
 
     <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
         <header class="masthead mb-auto">
-          <div class="inner">
-            <h4 class="masthead-brand">Is my commit message useful?</h4>
-            <nav class="nav nav-masthead justify-content-center">
-              <a class="nav-link" href="https://github.com/Loris156/ismycommitmessageuseful">GitHub</a>
-            </nav>
-          </div>
-        </header>
-  
-        <main role="main" class="inner cover">
-          <h1 class="cover-heading">Is my commit message useful?</h1>
-
-          <div class="input-group mb-5 mt-5">
-            <input id="messageInput" type="text" class="form-control" placeholder="Enter your commit message" aria-label="Enter you commit message" aria-describedby="basic-addon2">
-            <div class="input-group-append">
-              <button id="checkMessageButton" class="btn btn-primary" type="button">Check</button>
+            <div class="inner">
+                <h4 class="masthead-brand">Is my commit message useful?</h4>
+                <nav class="nav nav-masthead justify-content-center">
+                    <a class="nav-link" href="https://github.com/Loris156/ismycommitmessageuseful">GitHub</a>
+                </nav>
             </div>
-          </div>
+        </header>
+
+        <main role="main" class="inner cover">
+            <h1 class="cover-heading">Is my commit message useful?</h1>
+
+            <div class="input-group mb-5 mt-5">
+                <input id="messageInput" type="text" class="form-control" placeholder="Enter your commit message"
+                    aria-label="Enter you commit message" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button id="checkMessageButton" class="btn btn-primary" type="button">Check</button>
+                </div>
+            </div>
 
         </main>
 
-        <div class="card bg-dark">
+        <div class="card bg-dark mt-5">
             <div class="card-header">
-              Improve machine learning model
+                Improve machine learning model
             </div>
             <div class="card-body">
-              <h5 id="rateCommitMessage" class="card-title">Loading...</h5>
-              <p class="card-text text-info">Is this commit message good?</p>
-              <p>
-                <button id="rateCommitUsefulButton" type="button" class="btn btn-success mx-3" disabled>Yes</button>
-                <button id="rateCommitDontKnowButton" type="button" class="btn btn-info mx-3" disabled>I don't know</button>
-                <button id="rateCommitNotUsefulButton" type="button" class="btn btn-danger mx-3" disabled>No</button>
-              </p>
+                <h5 id="rateCommitMessage" class="card-title">Loading...</h5>
+                <p class="card-text text-info">Is this commit message good?</p>
+                <p>
+                    <button id="rateCommitUsefulButton" type="button" class="btn btn-success mx-3" disabled>Yes</button>
+                    <button id="rateCommitDontKnowButton" type="button" class="btn btn-info mx-3" disabled>I don't
+                        know</button>
+                    <button id="rateCommitNotUsefulButton" type="button" class="btn btn-danger mx-3"
+                        disabled>No</button>
+                </p>
             </div>
-          </div>
+        </div>
 
-          <footer class="mastfoot mt-auto">
+        <div class="mt-5">
+            <h4>How does this work?</h4>
+            <p><i>Is my commit message useful</i> uses machine learning to determine how good and well written a commit message is.</p>
+            <p>The ML model is trained from a large set of commit messages from many well-known open-source projects. Above you can rate the messages in the data set and improve the ML model. The model gets retrained every hour. Clicks on <i>I don't know</i> won't influnce the training process, it's just for sorting out bad commit messages.</p>
+        </div>
+
+        <footer class="mastfoot mt-auto">
             <div class="inner">
             </div>
-          </footer>
+        </footer>
     </div>
 
     <script src="js/jquery-3.4.0.min.js"></script>
