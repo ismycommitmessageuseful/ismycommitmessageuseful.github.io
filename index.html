@@ -1,19 +1,64 @@
 <!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <link rel="stylesheet" href="css/bootstrap.min.css" crossorigin="anonymous">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <title>Is my commit message useful?</title>
-    </head>
+    <link rel="stylesheet" href="css/bootstrap.min.css" crossorigin="anonymous">
+    <link href="css/ismycommitmessageuseful.css" rel="stylesheet">
 
-    <body>
+    <title>Is my commit message useful?</title>
+</head>
 
-    <h3>Is my commit message useful?</h3>
+<body class="text-center">
+
+    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+        <header class="masthead mb-auto">
+          <div class="inner">
+            <h4 class="masthead-brand">Is my commit message useful?</h4>
+            <nav class="nav nav-masthead justify-content-center">
+              <a class="nav-link" href="https://github.com/Loris156/ismycommitmessageuseful">GitHub</a>
+            </nav>
+          </div>
+        </header>
+  
+        <main role="main" class="inner cover">
+          <h1 class="cover-heading">Is my commit message useful?</h1>
+
+          <div class="input-group mb-5 mt-5">
+            <input id="messageInput" type="text" class="form-control" placeholder="Enter your commit message" aria-label="Enter you commit message" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button id="checkMessageButton" class="btn btn-primary" type="button">Check</button>
+            </div>
+          </div>
+
+        </main>
+
+        <div class="card bg-dark">
+            <div class="card-header">
+              Improve machine learning model
+            </div>
+            <div class="card-body">
+              <h5 id="rateCommitMessage" class="card-title">Loading...</h5>
+              <p class="card-text text-info">Is this commit message good?</p>
+              <p>
+                <button id="rateCommitUsefulButton" type="button" class="btn btn-success mx-3" disabled>Yes</button>
+                <button id="rateCommitDontKnowButton" type="button" class="btn btn-info mx-3" disabled>I don't know</button>
+                <button id="rateCommitNotUsefulButton" type="button" class="btn btn-danger mx-3" disabled>No</button>
+              </p>
+            </div>
+          </div>
+
+          <footer class="mastfoot mt-auto">
+            <div class="inner">
+            </div>
+          </footer>
+    </div>
 
     <script src="js/jquery-3.4.0.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
-    </body>
+    <script src="js/ismycommitmessageuseful.js"></script>
+</body>
+
 </html>
