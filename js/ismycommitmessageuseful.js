@@ -4,6 +4,25 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function show_alert(message, type) {
+    const alert_placeholder = $("#alert-placeholder");
+
+    if(message === null) {
+        alert_placeholder.html("");
+    }
+    else {
+        if(type === "message") {
+            alert_placeholder.html("<div class=\"alert alert-primary\" role=\"alert\">" + message + "</div>");
+        }
+        if(type === "warning") {
+            alert_placeholder.html("<div class=\"alert alert-warning\" role=\"alert\">" + message + "</div>");
+        }
+        else if(type === "error") {
+            alert_placeholder.html("<div class=\"alert alert-danger\" role=\"alert\">" + message + "</div>");
+        }       
+    }
+}
+
 var rateCommits;
 var currentRateCommit;
 
@@ -11,31 +30,42 @@ $(document).ready(function () {
     loadRateCommits();
 });
 
-$("#checkMessageButton").on("click", async function () {
-
-    var message = $("#messageInput").val().trim();
-    if (!message)
+$("#checkMessageButton").on("click", function () {
+    var button = $("#checkMessageButton");
+    const message = $("#messageInput").val().trim();
+    if (!message) {
+        show_alert("Please enter a commit message", "warning");
         return;
+    }
+        
+    button.prop("disabled", true);
+    button.html("<span class=\"spinner-border spinner-border-sm mr-1\" aria-hidden=\"true\"></span>Loading...");
+    show_alert(null);
 
-    $(this).prop("disabled", true);
-    $(this).html("<span class=\"spinner-border spinner-border-sm mr-1\" aria-hidden=\"true\"></span>Loading...");
+    const url = new URL(baseApiUrl + "predict");
+    url.searchParams.append("message", message);
 
-    // TODO: GET cannot have a body, change API method to accept message parameters from URL
-    // fetch(baseApiUrl + "predict", {
-    //     method: "GET",
-    //     cache: "no-cache",
-    //     headers: {
-    //         "Content-Type": "application/json"
-    //     },
-    //     body: {
-    //         message: $("#messageInput").text()
-    //     }
-    // })
-
-    await sleep(2000);
-
-    $(this).prop("disabled", false);
-    $(this).html("Check");
+    fetch(url, {
+        method: "GET",
+        cache: "no-cache",
+        mode: "cors"
+    })
+    .then(function(res) {
+        if(res.ok) {
+            return res.json();
+        }
+        throw "Status code is not OK";
+    })
+    .then(function(prediction) {
+        show_alert("Your commit message is <b>" + Math.round(prediction.usefulness) + "%</b> useful", "message");
+    })
+    .catch(function(reason) {
+        show_alert("Something went wrong (" + reason + ")", "error");
+    })
+    .finally(function() {
+        button.prop("disabled", false);
+        button.html("Check");
+    });
 });
 
 $("#rateCommitUsefulButton").on("click", function () {
