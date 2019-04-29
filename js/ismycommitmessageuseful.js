@@ -10,7 +10,7 @@ function getPrediction() {
         showAlert("Please enter a commit message", "warning");
         return;
     }
-        
+
     button.prop("disabled", true);
     button.html("<span class=\"spinner-border spinner-border-sm mr-1\" aria-hidden=\"true\"></span>Loading...");
     showAlert(null);
@@ -23,34 +23,34 @@ function getPrediction() {
         cache: "no-cache",
         mode: "cors"
     })
-    .then(function(res) {
-        if(res.ok) {
-            return res.json();
-        }
-        throw "Status code is not OK";
-    })
-    .then(function(prediction) {
-        showAlert("Your commit message is <b>" + Math.round(prediction.usefulness) + "%</b> useful", "message");
-    })
-    .catch(function(reason) {
-        showAlert("Something went wrong (" + reason + ")", "error");
-    })
-    .finally(function() {
-        button.prop("disabled", false);
-        button.html("Check");
-    });
+        .then(function (res) {
+            if (res.ok) {
+                return res.json();
+            }
+            throw "Status code is not OK";
+        })
+        .then(function (prediction) {
+            showAlert("Your commit message is <b>" + Math.round(prediction.usefulness) + "%</b> useful", "message");
+        })
+        .catch(function (reason) {
+            showAlert("Something went wrong (" + reason + ")", "error");
+        })
+        .finally(function () {
+            button.prop("disabled", false);
+            button.html("Check");
+        });
 }
 
 $(document).ready(function () {
     loadRateCommits();
 });
 
-$("#messageInput").on("keypress", function(event) {
-	var keycode = (event.keyCode ? event.keyCode : event.which);
-	if(keycode == "13"){
+$("#messageInput").on("keypress", function (event) {
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if (keycode == "13") {
         getPrediction();
         event.stopPropagation();
-	}
+    }
 });
 
 $("#checkMessageButton").on("click", function () {
@@ -104,15 +104,14 @@ function loadRateCommits() {
             }
         })
         .then(function (commits) {
-
-            console.log("rate commits loaded");
             rateCommits = commits;
-
+            
+            nextRateCommit();
+        })
+        .finally(function() {
             $("#rateCommitUsefulButton").prop("disabled", false);
             $("#rateCommitNotUsefulButton").prop("disabled", false);
             $("#rateCommitDontKnowButton").prop("disabled", false);
-
-            nextRateCommit();
         });
 }
 
