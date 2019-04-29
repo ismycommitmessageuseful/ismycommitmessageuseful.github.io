@@ -1,4 +1,4 @@
-## ismycommitmessageuseful
+## ismycommitmessageuseful.github.io
 
 ##### Main repository: https://github.com/Loris156/ismycommitmessageuseful
 
