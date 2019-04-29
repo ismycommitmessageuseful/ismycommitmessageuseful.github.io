@@ -1,46 +1,19 @@
 const baseApiUrl = "https://ismycommitmessageuseful.herokuapp.com/api/";
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function show_alert(message, type) {
-    const alert_placeholder = $("#alert-placeholder");
-
-    if(message === null) {
-        alert_placeholder.html("");
-    }
-    else {
-        if(type === "message") {
-            alert_placeholder.html("<div class=\"alert alert-primary\" role=\"alert\">" + message + "</div>");
-        }
-        if(type === "warning") {
-            alert_placeholder.html("<div class=\"alert alert-warning\" role=\"alert\">" + message + "</div>");
-        }
-        else if(type === "error") {
-            alert_placeholder.html("<div class=\"alert alert-danger\" role=\"alert\">" + message + "</div>");
-        }       
-    }
-}
-
 var rateCommits;
 var currentRateCommit;
 
-$(document).ready(function () {
-    loadRateCommits();
-});
-
-$("#checkMessageButton").on("click", function () {
+function getPrediction() {
     var button = $("#checkMessageButton");
     const message = $("#messageInput").val().trim();
     if (!message) {
-        show_alert("Please enter a commit message", "warning");
+        showAlert("Please enter a commit message", "warning");
         return;
     }
         
     button.prop("disabled", true);
     button.html("<span class=\"spinner-border spinner-border-sm mr-1\" aria-hidden=\"true\"></span>Loading...");
-    show_alert(null);
+    showAlert(null);
 
     const url = new URL(baseApiUrl + "predict");
     url.searchParams.append("message", message);
@@ -57,15 +30,31 @@ $("#checkMessageButton").on("click", function () {
         throw "Status code is not OK";
     })
     .then(function(prediction) {
-        show_alert("Your commit message is <b>" + Math.round(prediction.usefulness) + "%</b> useful", "message");
+        showAlert("Your commit message is <b>" + Math.round(prediction.usefulness) + "%</b> useful", "message");
     })
     .catch(function(reason) {
-        show_alert("Something went wrong (" + reason + ")", "error");
+        showAlert("Something went wrong (" + reason + ")", "error");
     })
     .finally(function() {
         button.prop("disabled", false);
         button.html("Check");
     });
+}
+
+$(document).ready(function () {
+    loadRateCommits();
+});
+
+$("#messageInput").on("keypress", function(event) {
+	var keycode = (event.keyCode ? event.keyCode : event.which);
+	if(keycode == "13"){
+        getPrediction();
+        event.stopPropagation();
+	}
+});
+
+$("#checkMessageButton").on("click", function () {
+    getPrediction();
 });
 
 $("#rateCommitUsefulButton").on("click", function () {
