@@ -3,44 +3,6 @@ const baseApiUrl = "https://ismycommitmessageuseful.herokuapp.com/api/";
 var rateCommits;
 var currentRateCommit;
 
-function getPrediction() {
-    var button = $("#checkMessageButton");
-    const message = $("#messageInput").val().trim();
-    if (!message) {
-        showAlert("Please enter a commit message", "warning");
-        return;
-    }
-
-    button.prop("disabled", true);
-    button.html("<span class=\"spinner-border spinner-border-sm mr-1\" aria-hidden=\"true\"></span>Loading...");
-    showAlert(null);
-
-    const url = new URL(baseApiUrl + "predict");
-    url.searchParams.append("message", message);
-
-    fetch(url, {
-        method: "GET",
-        cache: "no-cache",
-        mode: "cors"
-    })
-        .then(function (res) {
-            if (res.ok) {
-                return res.json();
-            }
-            throw "Status code is not OK";
-        })
-        .then(function (prediction) {
-            showAlert("Your commit message is <b>" + Math.round(prediction.usefulness) + "%</b> useful", "message");
-        })
-        .catch(function (reason) {
-            showAlert("Something went wrong (" + reason + ")", "error");
-        })
-        .finally(function () {
-            button.prop("disabled", false);
-            button.html("Check");
-        });
-}
-
 $(document).ready(function () {
     loadRateCommits();
 });
@@ -58,34 +20,55 @@ $("#checkMessageButton").on("click", function () {
 });
 
 $("#rateCommitUsefulButton").on("click", function () {
-    fetch(baseApiUrl + "commits/" + currentRateCommit.id + "/useful", {
-        method: "POST",
-        mode: "cors",
-        cache: "no-cache"
+    rateCommit("useful");
     });
-
-    nextRateCommit();
-});
 
 $("#rateCommitNotUsefulButton").on("click", function () {
-    fetch(baseApiUrl + "commits/" + currentRateCommit.id + "/notuseful", {
-        method: "POST",
-        mode: "cors",
-        cache: "no-cache"
-    });
-
-    nextRateCommit();
+    rateCommit("notuseful");
 });
 
 $("#rateCommitDontKnowButton").on("click", function () {
-    fetch(baseApiUrl + "commits/" + currentRateCommit.id + "/dontknow", {
-        method: "POST",
-        mode: "cors",
-        cache: "no-cache"
+    rateCommit("dontknow")
     });
 
-    nextRateCommit();
+async function getPrediction() {
+    var button = $("#checkMessageButton");
+    const message = $("#messageInput").val().trim();
+    if (!message) {
+        showAlert("Please enter a commit message", "warning");
+        return;
+    }
+
+    button.prop("disabled", true);
+    button.html("<span class=\"spinner-border spinner-border-sm mr-1\" aria-hidden=\"true\"></span>Loading...");
+    showAlert(null);
+
+    const url = new URL(baseApiUrl + "predict");
+    url.searchParams.append("message", message);
+
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            cache: "no-cache",
+            mode: "cors"
 });
+        if (response.ok) {
+            const prediction = await response.json();
+            showAlert("Your commit message is <b>" + Math.round(prediction.usefulness) + "%</b> useful", "message");
+        } else if (response.status === 429) {
+            const rateLimit = await response.json();
+            showAlert("Please wait " + rateLimit.retryAfter + " second(s) more", "warning");
+        } else {
+            throw "Unexpected status code";
+        }
+    } catch (error) {
+        showAlert("Something went wrong (" + error + ")", "error");
+    }
+    finally {
+        button.prop("disabled", false);
+        button.html("Check");
+    }
+}
 
 function loadRateCommits() {
     $("#rateCommitMessage").text("Loading...");
@@ -108,11 +91,41 @@ function loadRateCommits() {
             
             nextRateCommit();
         })
-        .finally(function() {
+        .finally(function () {
             $("#rateCommitUsefulButton").prop("disabled", false);
             $("#rateCommitNotUsefulButton").prop("disabled", false);
             $("#rateCommitDontKnowButton").prop("disabled", false);
         });
+}
+
+async function rateCommit(endpoint) {
+    $("#rateCommitUsefulButton").prop("disabled", true);
+    $("#rateCommitNotUsefulButton").prop("disabled", true);
+    $("#rateCommitDontKnowButton").prop("disabled", true);
+    $("#rateAlertPlaceholder").html("");
+
+    try {
+        const response = await fetch(baseApiUrl + "commits/" + currentRateCommit.id + "/" + endpoint, {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache"
+        });
+        if (response.ok) {
+            nextRateCommit();
+        }
+        else if (response.status === 429) {
+            var rateLimit = await response.json();
+            $("#rateAlertPlaceholder").html("<div class=\"alert alert-warning\" role=\"alert\">Please wait " + rateLimit.retryAfter + " second(s) more</div>")
+        }
+    }
+    catch (error) {
+        console.log("Failed to rate commit: " + error);
+    }
+    finally {
+        $("#rateCommitUsefulButton").prop("disabled", false);
+        $("#rateCommitNotUsefulButton").prop("disabled", false);
+        $("#rateCommitDontKnowButton").prop("disabled", false);
+    }
 }
 
 function nextRateCommit() {
