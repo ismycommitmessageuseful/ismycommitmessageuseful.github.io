@@ -88,6 +88,10 @@ $("#rateCommitDontKnowButton").on("click", function () {
 });
 
 function loadRateCommits() {
+    const timer = setTimeout(function () {
+        $("#rateCommitMessage").text("Please wait until the backend has booted...");
+    }, 1500);
+
     $("#rateCommitMessage").text("Loading...");
     $("#rateCommitUsefulButton").prop("disabled", true);
     $("#rateCommitNotUsefulButton").prop("disabled", true);
@@ -99,16 +103,17 @@ function loadRateCommits() {
         mode: "cors"
     })
         .then(function (response) {
+            clearTimeout(timer);
             if (response.ok) {
                 return response.json();
             }
         })
         .then(function (commits) {
             rateCommits = commits;
-            
+
             nextRateCommit();
         })
-        .finally(function() {
+        .finally(function () {
             $("#rateCommitUsefulButton").prop("disabled", false);
             $("#rateCommitNotUsefulButton").prop("disabled", false);
             $("#rateCommitDontKnowButton").prop("disabled", false);
